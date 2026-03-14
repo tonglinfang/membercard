@@ -19,11 +19,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22 # 警告回避のため最新のLTSに設定
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        # Vite 8 と Tailwind v4 の依存競合回避のため、legacy-peer-deps を使用
+        run: npm install --legacy-peer-deps
 
       - name: Build
         run: npm run build
