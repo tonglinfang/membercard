@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [
     react(),
   ],
-  // GitHub Pages のリポジトリ名
-  base: '/membercard/',
+  // 相対パスに設定することで、リポジトリ名に関わらず動作するようにします
+  base: './',
   
   build: {
     outDir: 'dist',
