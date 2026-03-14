@@ -23,9 +23,11 @@ export function useLiff(): LiffState & { retry: () => void } {
   useEffect(() => {
     let cancelled = false;
 
-    // IDが未設定、またはデフォルト値の場合はモックモード
     const liffId = import.meta.env.VITE_LIFF_ID;
-    if (!liffId || liffId === 'your_liff_id_here') {
+    console.log('Using LIFF ID:', liffId);
+
+    // モックモードの判定（IDが未設定またはプレースホルダの場合）
+    if (!liffId || liffId === 'your_liff_id_here' || liffId === '') {
       console.warn('VITE_LIFF_ID is not set. Using mock mode.');
       setState({
         ready: true,
@@ -44,23 +46,37 @@ export function useLiff(): LiffState & { retry: () => void } {
     initLiff()
       .then(async () => {
         if (cancelled) return;
-        const loggedIn = liff.isLoggedIn();
-        const isInClient = liff.isInClient();
 
-        if (!loggedIn) {
+        if (!liff.isLoggedIn()) {
+          console.log('Not logged in, initiating login...');
           liff.login();
           return;
         }
 
-        const profile = await liff.getProfile();
-        if (!cancelled) {
-          setState({ ready: true, loggedIn, profile, error: null, isInClient });
+        try {
+          const profile = await liff.getProfile();
+          const isInClient = liff.isInClient();
+          
+          console.log('LIFF initialized, profile obtained:', profile.displayName);
+          
+          if (!cancelled) {
+            setState({ 
+              ready: true, 
+              loggedIn: true, 
+              profile, 
+              error: null, 
+              isInClient 
+            });
+          }
+        } catch (err: any) {
+          console.error('Failed to get profile:', err);
+          throw new Error(`プロフィールの取得に失敗しました: ${err.message}`);
         }
       })
       .catch((e: Error) => {
-        console.error('LIFF init error:', e);
+        console.error('LIFF Error:', e);
         if (!cancelled) {
-          setState(s => ({ ...s, ready: true, error: `LIFF初期化エラー: ${e.message}` }));
+          setState(s => ({ ...s, ready: true, error: `LIFFエラー: ${e.message}` }));
         }
       });
 
