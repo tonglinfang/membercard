@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-line: #00B900;
+  --color-line-dark: #009900;
+  
+  /* Safe area utility values as theme variables if needed, 
+     but utilities are often easier defined directly */
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+html, body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  background-color: #f3f4f6; /* bg-gray-100 */
+}
